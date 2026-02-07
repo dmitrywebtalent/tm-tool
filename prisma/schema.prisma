@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Card {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  dateCreated DateTime  @default(now())
+  dateEnd     DateTime?
+  position    Int       @default(0)
+
+  tags        CardTag[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Tag {
+  id       String    @id @default(cuid())
+  name     String
+  type     TagType
+  color    String?
+  position Int       @default(0)
+
+  cards    CardTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name, type])
+}
+
+enum TagType {
+  STATUS
+  PRIORITY
+  CLIENT
+  CATEGORY
+}
+
+model CardTag {
+  id     String @id @default(cuid())
+  cardId String
+  tagId  String
+
+  card   Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, tagId])
+}
