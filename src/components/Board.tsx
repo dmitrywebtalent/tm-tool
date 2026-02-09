@@ -17,6 +17,7 @@ import { Card, Tag, TagType, GroupByOption } from "@/types";
 import BoardColumn from "./BoardColumn";
 import CardModal from "./CardModal";
 import TagManager from "./TagManager";
+import LoadingScreen from "./LoadingScreen";
 
 const GROUP_OPTIONS: { value: GroupByOption; label: string }[] = [
   { value: "STATUS", label: "Status" },
@@ -30,6 +31,7 @@ export default function Board() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [groupBy, setGroupBy] = useState<GroupByOption>("STATUS");
   const [loading, setLoading] = useState(true);
+  const [animationDone, setAnimationDone] = useState(false);
 
   const [showCardModal, setShowCardModal] = useState(false);
   const [editingCard, setEditingCard] = useState<Card | null>(null);
@@ -330,12 +332,8 @@ export default function Board() {
     await Promise.all([fetchTags(), fetchCards()]);
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-[#0f0f0f]">
-        <div className="text-gray-500 text-lg">Loading...</div>
-      </div>
-    );
+  if (loading || !animationDone) {
+    return <LoadingScreen onFinished={() => setAnimationDone(true)} />;
   }
 
   const groups = getGroups();

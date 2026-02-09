@@ -57,7 +57,7 @@ export default function CardItem({ card, onEdit, onDelete }: CardItemProps) {
       style={style}
       {...attributes}
       {...listeners}
-      className={`bg-[#1e1e1e] rounded-xl border border-[#2a2a2a] border-l-4 ${borderColor} p-4 hover:bg-[#242424] hover:border-[#333] cursor-grab active:cursor-grabbing group ${
+      className={`bg-[#2a2a2a] rounded-xl border border-[#3a3a3a] border-l-4 ${borderColor} p-4 hover:bg-[#323232] hover:border-[#4a4a4a] cursor-grab active:cursor-grabbing group ${
         isDragging ? "shadow-2xl z-10" : ""
       }`}
       onClick={() => onEdit(card)}
