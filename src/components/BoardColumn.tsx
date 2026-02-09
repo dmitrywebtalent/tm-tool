@@ -26,7 +26,12 @@ export default function BoardColumn({
   const { setNodeRef } = useDroppable({ id: tag.id });
 
   return (
-    <div className="bg-[#161616] rounded-xl p-4 min-w-[300px] max-w-[340px] flex-shrink-0 flex flex-col max-h-full border border-[#222]">
+    <div
+      className="rounded-xl p-4 min-w-[300px] max-w-[340px] flex-shrink-0 flex flex-col max-h-full border border-[#222]"
+      style={{
+        backgroundColor: `color-mix(in srgb, ${tag.color || "#6B7280"} 6%, #161616)`,
+      }}
+    >
       {/* Column header */}
       <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-2.5">

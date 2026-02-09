@@ -339,7 +339,7 @@ export default function Board() {
   const groups = getGroups();
 
   return (
-    <div className="h-screen flex flex-col bg-[#0f0f0f]">
+    <div className="h-screen flex flex-col">
       {/* Header */}
       <header className="bg-[#1a1a1a] border-b border-[#2a2a2a] px-6 py-4 flex items-center justify-between shrink-0">
         <h1 className="text-2xl font-bold text-white tracking-tight">

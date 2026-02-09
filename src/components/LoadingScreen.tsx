@@ -58,7 +58,7 @@ export default function LoadingScreen({ onFinished }: LoadingScreenProps) {
   }, [isFinished, onFinished]);
 
   return (
-    <div className="flex items-center justify-center h-screen bg-[#0f0f0f]">
+    <div className="flex items-center justify-center h-screen">
       <div className="flex flex-col items-start gap-1 max-w-md">
         {/* Pulsing dots */}
         <div className="flex gap-1.5 mb-4 self-center">
