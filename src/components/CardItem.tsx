@@ -1,5 +1,7 @@
 "use client";
 
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Card, Tag } from "@/types";
 
 interface CardItemProps {
@@ -9,6 +11,21 @@ interface CardItemProps {
 }
 
 export default function CardItem({ card, onEdit, onDelete }: CardItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: card.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   const getTag = (type: string): Tag | undefined => {
     return card.tags.find((ct) => ct.tag.type === type)?.tag;
   };
@@ -36,7 +53,13 @@ export default function CardItem({ card, onEdit, onDelete }: CardItemProps) {
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border-l-4 ${borderColor} p-3 hover:shadow-md transition-shadow cursor-pointer group`}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`bg-white rounded-lg shadow-sm border-l-4 ${borderColor} p-3 hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing group ${
+        isDragging ? "shadow-lg z-10" : ""
+      }`}
       onClick={() => onEdit(card)}
     >
       <div className="flex items-start justify-between gap-2">
@@ -97,4 +120,3 @@ export default function CardItem({ card, onEdit, onDelete }: CardItemProps) {
     </div>
   );
 }
-

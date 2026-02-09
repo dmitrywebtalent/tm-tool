@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/core";
 import { Card, Tag } from "@/types";
 import CardItem from "./CardItem";
 
@@ -18,6 +23,8 @@ export default function BoardColumn({
   onDeleteCard,
   onQuickAdd,
 }: BoardColumnProps) {
+  const { setNodeRef } = useDroppable({ id: tag.id });
+
   return (
     <div className="bg-gray-50 rounded-xl p-3 min-w-[280px] max-w-[320px] flex-shrink-0 flex flex-col max-h-full">
       {/* Column header */}
@@ -35,15 +42,23 @@ export default function BoardColumn({
       </div>
 
       {/* Cards list */}
-      <div className="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0">
-        {cards.map((card) => (
-          <CardItem
-            key={card.id}
-            card={card}
-            onEdit={onEditCard}
-            onDelete={onDeleteCard}
-          />
-        ))}
+      <div
+        ref={setNodeRef}
+        className="flex flex-col gap-2 overflow-y-auto flex-1 min-h-[40px]"
+      >
+        <SortableContext
+          items={cards.map((c) => c.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {cards.map((card) => (
+            <CardItem
+              key={card.id}
+              card={card}
+              onEdit={onEditCard}
+              onDelete={onDeleteCard}
+            />
+          ))}
+        </SortableContext>
       </div>
 
       {/* Quick add button */}
@@ -56,4 +71,3 @@ export default function BoardColumn({
     </div>
   );
 }
-
