@@ -39,7 +39,6 @@ export default function Board() {
   const [showTagManager, setShowTagManager] = useState(false);
 
   const [activeCard, setActiveCard] = useState<Card | null>(null);
-  // Track where the drag started (original tag id for the groupBy)
   const dragOriginTagId = useRef<string | null>(null);
 
   const sensors = useSensors(
@@ -90,7 +89,7 @@ export default function Board() {
           id: "__untagged__",
           name: "Untagged",
           type: groupBy,
-          color: "#9CA3AF",
+          color: "#4B5563",
           position: 999,
         },
         cards: untaggedCards,
@@ -100,15 +99,11 @@ export default function Board() {
     return groups;
   }, [cards, tags, groupBy]);
 
-  // Given an id, find which column/group it belongs to.
-  // The id might be a column (tag) id or a card id.
   const findColumnById = useCallback(
     (id: string) => {
       const groups = getGroups();
-      // Direct column match
       const col = groups.find((g) => g.tag.id === id);
       if (col) return col;
-      // Card match
       for (const g of groups) {
         if (g.cards.some((c) => c.id === id)) return g;
       }
@@ -120,7 +115,6 @@ export default function Board() {
   const handleDragStart = (event: DragStartEvent) => {
     const card = cards.find((c) => c.id === event.active.id);
     setActiveCard(card || null);
-    // Remember original column
     if (card) {
       const originalTag = card.tags.find((ct) => ct.tag.type === groupBy);
       dragOriginTagId.current = originalTag?.tag.id || "__untagged__";
@@ -141,7 +135,6 @@ export default function Board() {
     )
       return;
 
-    // Move card between columns optimistically for visual feedback
     setCards((prev) => {
       const movingCard = prev.find((c) => c.id === active.id);
       if (!movingCard) return prev;
@@ -175,13 +168,11 @@ export default function Board() {
     dragOriginTagId.current = null;
 
     if (!over) {
-      // Dropped outside — revert
       await fetchCards();
       return;
     }
 
     const groups = getGroups();
-    // After optimistic updates, find the column the card currently sits in
     const currentColumn = groups.find((g) =>
       g.cards.some((c) => c.id === active.id)
     );
@@ -195,7 +186,6 @@ export default function Board() {
     const isSameColumn = originTagId === currentColumn.tag.id;
 
     if (isSameColumn) {
-      // Same-column reorder
       const oldIndex = currentColumn.cards.findIndex(
         (c) => c.id === active.id
       );
@@ -211,7 +201,6 @@ export default function Board() {
       );
       const reorderedIds = reorderedCards.map((c) => c.id);
 
-      // Optimistic position update
       setCards((prev) =>
         prev.map((card) => {
           const pos = reorderedIds.indexOf(card.id);
@@ -226,7 +215,6 @@ export default function Board() {
         body: JSON.stringify({ cardIds: reorderedIds }),
       });
     } else {
-      // Cross-column move
       const fromTagId =
         originTagId !== "__untagged__" ? originTagId : null;
       const toTagId =
@@ -234,16 +222,13 @@ export default function Board() {
           ? currentColumn.tag.id
           : null;
 
-      // Figure out position in target column
       const targetCards = currentColumn.cards;
       const overIdx = targetCards.findIndex((c) => c.id === over.id);
-      // If we dropped on the column itself (empty area), append at end
       const insertIdx =
         over.id === currentColumn.tag.id || overIdx === -1
           ? targetCards.length - 1
           : overIdx;
 
-      // Build final order for the target column
       const withoutActive = targetCards.filter(
         (c) => c.id !== active.id
       );
@@ -266,7 +251,6 @@ export default function Board() {
         }),
       });
 
-      // Refresh from server for a clean state
       await fetchCards();
     }
   };
@@ -348,8 +332,8 @@ export default function Board() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-gray-400 text-lg">Loading...</div>
+      <div className="flex items-center justify-center h-screen bg-[#0f0f0f]">
+        <div className="text-gray-500 text-lg">Loading...</div>
       </div>
     );
   }
@@ -357,21 +341,24 @@ export default function Board() {
   const groups = getGroups();
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100">
-      <header className="bg-white border-b px-6 py-3 flex items-center justify-between shrink-0">
-        <h1 className="text-xl font-bold text-gray-800">📋 TM Tool</h1>
-        <div className="flex items-center gap-3">
+    <div className="h-screen flex flex-col bg-[#0f0f0f]">
+      {/* Header */}
+      <header className="bg-[#1a1a1a] border-b border-[#2a2a2a] px-6 py-4 flex items-center justify-between shrink-0">
+        <h1 className="text-2xl font-bold text-white tracking-tight">
+          Everyday Task
+        </h1>
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Group by:</span>
+            <span className="text-sm text-gray-400">Group by:</span>
             <div className="flex gap-1">
               {GROUP_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => setGroupBy(opt.value)}
-                  className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                  className={`text-sm px-4 py-1.5 rounded-lg font-medium ${
                     groupBy === opt.value
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      ? "bg-indigo-600 text-white"
+                      : "bg-[#252525] text-gray-400 hover:bg-[#303030] hover:text-gray-300"
                   }`}
                 >
                   {opt.label}
@@ -380,11 +367,11 @@ export default function Board() {
             </div>
           </div>
 
-          <div className="w-px h-6 bg-gray-200" />
+          <div className="w-px h-6 bg-[#333]" />
 
           <button
             onClick={() => setShowTagManager(true)}
-            className="text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+            className="text-sm px-4 py-1.5 rounded-lg font-medium bg-[#252525] text-gray-400 hover:bg-[#303030] hover:text-gray-300"
           >
             🏷 Tags
           </button>
@@ -394,13 +381,14 @@ export default function Board() {
               setPreselectedTagId(undefined);
               setShowCardModal(true);
             }}
-            className="text-xs px-3 py-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+            className="text-sm px-4 py-1.5 rounded-lg font-medium bg-indigo-600 text-white hover:bg-indigo-500"
           >
             + New Card
           </button>
         </div>
       </header>
 
+      {/* Board */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -408,8 +396,8 @@ export default function Board() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex-1 overflow-x-auto overflow-y-hidden p-4">
-          <div className="flex gap-4 h-full">
+        <div className="flex-1 overflow-x-auto overflow-y-hidden p-5">
+          <div className="flex gap-5 h-full">
             {groups.map((group) => (
               <BoardColumn
                 key={group.tag.id}
@@ -425,20 +413,20 @@ export default function Board() {
 
         <DragOverlay dropAnimation={null}>
           {activeCard ? (
-            <div className="rotate-2 opacity-90 w-[280px]">
+            <div className="rotate-2 opacity-90 w-[300px]">
               <div
-                className={`bg-white rounded-lg shadow-lg border-l-4 p-3 ${
+                className={`bg-[#2a2a2a] rounded-xl shadow-2xl border-l-4 p-4 ${
                   activeCard.tags.find((ct) => ct.tag.type === "CATEGORY")
                     ?.tag.name === "Personal"
                     ? "border-l-purple-500"
                     : "border-l-orange-500"
                 }`}
               >
-                <h3 className="font-medium text-gray-900 text-sm">
+                <h3 className="font-semibold text-gray-100 text-base">
                   {activeCard.title}
                 </h3>
                 {activeCard.description && (
-                  <p className="text-gray-500 text-xs mt-1 line-clamp-2">
+                  <p className="text-gray-400 text-sm mt-1 line-clamp-2">
                     {activeCard.description}
                   </p>
                 )}

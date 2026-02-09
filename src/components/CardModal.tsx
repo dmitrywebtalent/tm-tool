@@ -87,64 +87,64 @@ export default function CardModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        className="bg-[#1a1a1a] rounded-2xl shadow-2xl border border-[#2a2a2a] w-full max-w-lg max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <form onSubmit={handleSubmit}>
-          <div className="flex items-center justify-between p-4 border-b">
-            <h2 className="text-lg font-semibold text-gray-800">
+          <div className="flex items-center justify-between p-5 border-b border-[#2a2a2a]">
+            <h2 className="text-xl font-bold text-gray-100">
               {card ? "Edit Card" : "New Card"}
             </h2>
             <button
               type="button"
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-xl"
+              className="text-gray-500 hover:text-gray-300 text-xl"
             >
               ✕
             </button>
           </div>
 
-          <div className="p-4 space-y-4">
+          <div className="p-5 space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-300 mb-1.5">
                 Title <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full bg-[#252525] border border-[#333] rounded-xl px-4 py-2.5 text-base text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Card title..."
                 autoFocus
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-300 mb-1.5">
                 Description
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full bg-[#252525] border border-[#333] rounded-xl px-4 py-2.5 text-base text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
                 placeholder="Add a description..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-300 mb-1.5">
                 Due Date
               </label>
               <input
                 type="date"
                 value={dateEnd}
                 onChange={(e) => setDateEnd(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="bg-[#252525] border border-[#333] rounded-xl px-4 py-2.5 text-base text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent [color-scheme:dark]"
               />
             </div>
 
@@ -152,7 +152,7 @@ export default function CardModal({
               (type) =>
                 tagsByType[type] && (
                   <div key={type}>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">
                       {typeLabels[type]}
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -163,10 +163,10 @@ export default function CardModal({
                             key={tag.id}
                             type="button"
                             onClick={() => toggleTag(tag.id, type)}
-                            className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+                            className={`text-sm px-3.5 py-1.5 rounded-lg border font-medium ${
                               isSelected
                                 ? "text-white border-transparent shadow-sm"
-                                : "text-gray-600 border-gray-300 hover:border-gray-400"
+                                : "text-gray-400 border-[#333] hover:border-[#555] hover:text-gray-300"
                             }`}
                             style={
                               isSelected
@@ -184,18 +184,18 @@ export default function CardModal({
             )}
           </div>
 
-          <div className="flex items-center justify-end gap-2 p-4 border-t">
+          <div className="flex items-center justify-end gap-3 p-5 border-t border-[#2a2a2a]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+              className="px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-gray-200 rounded-lg"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!title.trim()}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-5 py-2.5 text-sm font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {card ? "Save Changes" : "Create Card"}
             </button>
@@ -205,4 +205,3 @@ export default function CardModal({
     </div>
   );
 }
-
